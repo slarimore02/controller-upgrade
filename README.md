@@ -1,7 +1,7 @@
 # Ansible Playbook for Automating Controller Upgrades
 
 ## Summary
-This playbook and collection of roles allow an administrator to specify either a controller base image or patch to upgrade. It will determine whether the image requires an upload to the controller, and will upload if necessary. From there, it will determine if the image is a patch or system image, then kick off the appropriate operation.
+This playbook and collection of roles allow an administrator to specify either a controller base image or patch to upgrade. It will determine whether the image requires an upload to the controller, and will upload if necessary. From there, it will determine if the image is a patch or system image, then perform the appropriate operation.
 
 
 ## Regarding Virtual Environments
