@@ -1,0 +1,25 @@
+---
+- name: block to upload image and get UUID
+  block:
+# upload
+  - name: upload image using api
+    avi_api_image:
+      avi_credentials: "{{ avi_credentials }}"
+      file_path: "{{ upgrade_file_location }}"
+      api_version: "{ {avi_api_version }}"
+# get new image list
+  - name: get updated image list
+    avi_api_session:
+      avi_credentials: "{{ avi_credentials }}"       
+      http_method: get
+      timeout: 3000
+      path: image
+    register: image_list
+  - set_fact:
+      image_name: "{{ image_list.obj.results | json_query(name_query) }}"
+      image_type: "{{ image_list.obj.results | json_query(type_query) }}"
+      image_uuid: "{{ image_list.obj.results | json_query(uuid_query) }}"
+    vars:
+      name_query: "[?controller_info.build.tag.contains(@, '{{ zip_image_version }}')].name"
+      type_query: "[?controller_info.build.tag.contains(@, '{{ zip_image_version }}')].type"
+      uuid_query: "[?controller_info.build.tag.contains(@, '{{ zip_image_version }}')].uuid" 

@@ -1,0 +1,78 @@
+---
+- hosts: ctl2
+  gather_facts: no
+  roles:
+    - role: "avinetworks.avisdk"
+  connection: local
+  vars:
+    avi_credentials:
+      controller: "{{ ansible_host }}"
+      username: "{{ ansible_user }}"
+      password: "{{ ansible_password }}"
+      api_version: "{{ avi_api_version }}"
+    upgrade_file_location: ./controller.pkg
+
+  tasks:
+  # Check whether this is a GSLB-enabled Cluster
+    - name: Check GSLB Enabled
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        http_method: get
+        timeout: 3000
+        path: gslb
+      register: gslb_check
+
+    - name: Fail if GSLB Enabled
+      fail:
+        msg: "This cluster has GSLB enabled. Please manually update this cluster."
+      when: gslb_check.obj.count > 0
+
+    - name: Pull version file out of upgrade package
+      unarchive:
+        src: "{{ upgrade_file_location }}"
+        dest: ./
+        extra_opts:
+        - --strip=1
+        - --wildcards
+        - 'bootstrap/VERSION'
+      register: unzip_results
+
+  # get image version from upgrade file
+    - set_fact:
+        zip_image_version: "{{ lookup('csvfile', 'Tag file=./VERSION delimiter=:') | trim}}"
+
+  # Search image list for our current upgrade
+    - name: get image list
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"       
+        http_method: get
+        timeout: 3000
+        path: image
+      register: image_list
+    - set_fact:
+        image_name: "{{image_list.obj.results | json_query(name_query) }}"
+        image_type: "{{image_list.obj.results | json_query(type_query) }}"
+        image_uuid: "{{image_list.obj.results | json_query(uuid_query) }}"
+      vars:
+        name_query: "[?controller_info.build.tag.contains(@, '{{ zip_image_version }}')].name"
+        type_query: "[?controller_info.build.tag.contains(@, '{{ zip_image_version }}')].type"
+        uuid_query: "[?controller_info.build.tag.contains(@, '{{ zip_image_version }}')].uuid" 
+
+
+  # Upload the image if it is not yet on the controller
+    - name: Calling upload_image role
+      include_role:
+        name: upload_image
+      when: image_name | length == 0
+
+    # Calling patch_upgrade role if this is a patch operation
+    - name: Calling patch_upgrade role
+      include_role:
+        name: patch_upgrade
+      when: image_type[0] == "IMAGE_TYPE_PATCH"
+
+    - name: Calling system_upgrade role
+      include_role:
+        name: system_upgrade
+      when: image_type[0] == "IMAGE_TYPE_SYSTEM"
+  

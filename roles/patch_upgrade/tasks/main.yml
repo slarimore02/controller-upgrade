@@ -1,0 +1,25 @@
+---
+
+- name: Get System Image
+  set_fact:
+    base_image_uuid: "{{ image_list.obj.results | json_query(base_img_query) }}"
+  vars:
+    base_img_query: "[?name.starts_with(@, '{{ image_name[0].split('-')[0] }}') && type == 'IMAGE_TYPE_SYSTEM'].uuid"
+
+- debug: msg="Base Image UUID{{ ":" }} {{ base_image_uuid[0] }}"
+- debug: msg="Patch Image UUID{{ ":" }} {{ image_uuid[0] }}"
+
+- name: Upgrade Controller
+  avi_api_session:
+    avi_credentials: "{{ avi_credentials }}"
+    api_version: "{{ avi_api_version }}"
+    http_method: post
+    timeout: 300
+    path: "upgrade"
+    data:
+      # image_uuid: "{{ base_image_uuid.0 }}"
+      system: true
+      skip_warnings: true
+      controller_patch_uuid: "{{ image_uuid.0 }}"
+      se_patch_uuid: "{{ image_uuid.0 }}"
+        
