@@ -4,13 +4,14 @@
   roles:
     - role: "avinetworks.avisdk"
   connection: local
-  vars:
-    avi_credentials:
-      controller: "{{ ansible_host }}"
-      username: "{{ ansible_user }}"
-      password: "{{ ansible_password }}"
-      api_version: "{{ avi_api_version }}"
-    upgrade_file_location: ./controller.pkg
+  # vars:
+  #   avi_credentials:
+  #     controller: "{{ ansible_host }}"
+  #     username: "{{ ansible_user }}"
+  #     password: "{{ ansible_password }}"
+  #     api_version: "{{ avi_api_version }}"
+  #   upgrade_file_location: ./controller.pkg
+  vars_files: ./vars.yml
 
   tasks:
   # Check whether this is a GSLB-enabled Cluster

@@ -1,0 +1,7 @@
+---
+avi_credentials:
+  controller:             #192.168.0.182
+  username:               #admin
+  password:               #Avi123!@#
+  api_version:            #20.1.4
+upgrade_file_location:    #./controller.pkg
