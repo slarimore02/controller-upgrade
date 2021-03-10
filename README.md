@@ -3,15 +3,17 @@
 ## Summary
 This playbook and collection of roles allow an administrator to specify either a controller base image or patch to upgrade. It will determine whether the image requires an upload to the controller, and will upload if necessary. From there, it will determine if the image is a patch or system image, then perform the appropriate operation.
 
-Please define variables in the `vars.yml` file before use.
+Please define variables in the `vars.yml` file before use. The ansible.cfg currently uses ./hosts.yml for the inventory. Either edit this file with your controller information, or use your own inventory file. Multiple clusters are supported so long as they are performing the same upgrade and are on the same API version.
 
-
-## Regarding Virtual Environments
-If you choose to use a Python virtual environment, make sure that you set the ansible_python_interpreter to the appropriate Python binary as shown below.
-
+## Getting Started
 ```
+git clone git@github.com:joeycoakleyavi/controller-upgrade.git
+cd controller-upgrade
 python3 -m venv env
 source env/bin/activate
 pip3 install -r requirements.txt
-ansible-playbook upgrade.yml -u admin -kK --extra-vars="ansible_python_interpreter=$(which python)"
+
+Edit hosts.yml to include which controllers should be upgraded. The playbook currently points to **ALL** hosts in this file. Scope this down if required.
+
+ansible-playbook upgrade.yml"
 ```
