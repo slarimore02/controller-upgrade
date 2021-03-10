@@ -1,16 +1,9 @@
 ---
-- hosts: ctl2
+- hosts: all
   gather_facts: no
   roles:
     - role: "avinetworks.avisdk"
   connection: local
-  # vars:
-  #   avi_credentials:
-  #     controller: "{{ ansible_host }}"
-  #     username: "{{ ansible_user }}"
-  #     password: "{{ ansible_password }}"
-  #     api_version: "{{ avi_api_version }}"
-  #   upgrade_file_location: ./controller.pkg
   vars_files: ./vars.yml
 
   tasks:
@@ -37,6 +30,7 @@
         - --wildcards
         - 'bootstrap/VERSION'
       register: unzip_results
+      run_once: True
 
   # get image version from upgrade file
     - set_fact:
@@ -58,7 +52,6 @@
         name_query: "[?controller_info.build.tag.contains(@, '{{ zip_image_version }}')].name"
         type_query: "[?controller_info.build.tag.contains(@, '{{ zip_image_version }}')].type"
         uuid_query: "[?controller_info.build.tag.contains(@, '{{ zip_image_version }}')].uuid" 
-
 
   # Upload the image if it is not yet on the controller
     - name: Calling upload_image role
