@@ -13,5 +13,5 @@ If you choose to use a Python virtual environment, make sure that you set the an
 python3 -m venv env
 source env/bin/activate
 pip3 install -r requirements.txt
-ansible-playbook upgrade.yml -u admin -kK --extra-vars="avi_api_version=20.1.4 ansible_python_interpreter=$(which python)"
+ansible-playbook upgrade.yml -u admin -kK --extra-vars="ansible_python_interpreter=$(which python)"
 ```
