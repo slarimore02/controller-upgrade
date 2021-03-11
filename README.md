@@ -16,5 +16,5 @@ ansible-galaxy install avinetworks.avisdk
 
 Edit hosts.yml to include which controllers should be upgraded. The playbook currently points to **ALL** hosts in this file. Scope this down if required.
 
-ansible-playbook upgrade.yml"
+ansible-playbook upgrade.yml
 ```
