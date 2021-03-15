@@ -6,7 +6,7 @@
     avi_api_image:
       avi_credentials: "{{ avi_credentials }}"
       file_path: "{{ upgrade_file_location }}"
-      api_version: "{ {avi_api_version }}"
+      api_version: "{{ avi_credentials.api_version }}"
 # get new image list
   - name: get updated image list
     avi_api_session:
