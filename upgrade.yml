@@ -69,4 +69,19 @@
       include_role:
         name: system_upgrade
       when: image_type[0] == "IMAGE_TYPE_SYSTEM"
-  
+
+    - name: Monitor Upgrade
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        http_method: get
+        timeout: 300
+        path: "upgradestatusinfo"
+      register: upgrade_status
+      until: "{{upgrade_status.obj.results | json_query(status_query) | unique | first == 'UPGRADE_FSM_COMPLETED' and upgrade_status.obj.results | json_query(status_query) | unique | length == 1 }}"
+      vars:
+        status_query: "[*].state.state"
+      delay: 30
+      retries: 80
+
+    - debug: msg="Complete!"
