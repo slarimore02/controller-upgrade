@@ -78,10 +78,7 @@
         timeout: 300
         path: "upgradestatusinfo"
       register: upgrade_status
-      until: "{{upgrade_status.obj.results | json_query(status_query) | unique | first == 'UPGRADE_FSM_COMPLETED' and upgrade_status.obj.results | json_query(status_query) | unique | length == 1 }}"
-      vars:
-        status_query: "[*].state.state"
+      until: "{{upgrade_status | upgrade_result() }}"
       delay: 30
       retries: 80
 
-    - debug: msg="Complete!"
