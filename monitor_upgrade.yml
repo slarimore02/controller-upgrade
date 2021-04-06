@@ -1,0 +1,32 @@
+---
+- name: Monitor Upgrade
+  avi_api_session:
+    avi_credentials: "{{ avi_credentials }}"
+    api_version: "{{ avi_credentials.api_version }}"
+    http_method: get
+    timeout: 300
+    path: "upgradestatusinfo"
+  register: upgrade_status
+  # We need to keep polling until the upgrade is finished, but survive reboots and windows where the API is unavaiable. Async for reboots, default values for API unavailable.
+  until: >
+      ("{{upgrade_status.obj.results | json_query(status_query) | unique | first == 'UPGRADE_FSM_COMPLETED' }}) and
+      ("{{upgrade_status.obj.results | default([]) | json_query(status_query) | unique | length == 1 }}"
+  vars:
+    status_query: "[*].state.state"
+  delay: 30
+  retries: 80
+  ingnore_unreachable: True
+  ignore_errors: True
+
+- set_fact:
+    upgrade_result: 
+
+- name: Sleep if last step failed
+  pause:
+    seconds: 10
+
+- set_fact:
+    counter: "{{ counter | default  }}"
+
+- include_tasks: monitor_upgrade.yml
+  when: 

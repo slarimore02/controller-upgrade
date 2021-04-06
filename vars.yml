@@ -4,5 +4,5 @@ avi_credentials:
   username: admin
   password: Avi123!@#
   api_version: 20.1.4
-upgrade_file_location: ./controller.pkg
+upgrade_file_location: avi_patch-20.1.4-2p3-9005.pkg
 ansible_python_interpreter: "{{ ansible_playbook_python }}"
