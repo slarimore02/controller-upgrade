@@ -1,5 +1,4 @@
 ---
-
 - name: Get System Image
   set_fact:
     base_image_uuid: "{{ image_list.obj.results | json_query(base_img_query) }}"

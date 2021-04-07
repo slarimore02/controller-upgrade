@@ -1,11 +1,19 @@
 #!/usr/bin/python
 import jmespath
 
+def normalize_version(version):
+    # Return version and build number to be compared
+    #20.1.4-9005-20210330.173606 : from Version file
+    #20.1.4(9087) 2021-02-15 20:20:12 UTC : from API
+    version = version.replace("(", "-")
+    version = version.replace(")", "-")
+    return (version.split("-")[0], version.split("-")[1])
+
 class FilterModule(object):
     def filters(self):
         return {
             'upgrade_result': self.upgrade_result,
-            'get_gslb_upgrade_info': self.get_gslb_upgrade_info
+            'compare_versions': self.compare_versions
         }
 
     def upgrade_result(self, data):
@@ -19,13 +27,12 @@ class FilterModule(object):
             pass
         return result
 
-    def get_gslb_upgrade_info(self, data):
-        result = {}
-        #Step One: Determine if mainteanance mode is enabled
-        
-        data.setdefault('obj', {'results': [{}]}) #Avoid KeyError
-        result['maintenance_mode'] = data['obj']['results'].get('maintenance_mode', None)
+    def compare_versions(self, upgrade_version, controller_version):
+        return normalize_version(upgrade_version) == normalize_version(controller_version)
 
-        return result
-        
+
+
+
+
+
 
