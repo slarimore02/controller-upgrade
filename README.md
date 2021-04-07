@@ -16,5 +16,11 @@ ansible-galaxy install avinetworks.avisdk
 
 Edit hosts.yml to include which controllers should be upgraded. The playbook currently points to **ALL** hosts in this file. Scope this down if required.
 
-ansible-playbook upgrade.yml
+Note: Only include the leader node of a given cluster in hosts.yml. Avi Controllers will handle distributing the image and performing upgrades to all member controllers of the cluster.
+
+For Non-GSLB Avi Clusters:
+ansible-playbook upgrade_non_gslb.yml
+
+For GSLB-Enabled Clusters:
+ansible-playbook upgrade_gslb.yml
 ```
