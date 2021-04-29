@@ -7,6 +7,10 @@
 
 - name: Upgrade GSLB Followers
   import_playbook: upgrade_followers.yml
+  tags:
+    - followers
 
 - name: Upgrade GSLB Leader
   import_playbook: upgrade_leader.yml
+  tags:
+    - leader

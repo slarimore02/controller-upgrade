@@ -32,10 +32,14 @@
         - 'bootstrap/VERSION'
       register: unzip_results
       run_once: True
+      tags: 
+        - prepare
 
   # get image version from upgrade file
     - set_fact:
         zip_image_version: "{{ lookup('csvfile', 'Tag file=./VERSION delimiter=:') | trim}}"
+      tags:
+        - prepare
 
   # Search image list for our current upgrade
     - name: get image list
@@ -45,6 +49,8 @@
         timeout: 3000
         path: image
       register: image_list
+      tags:
+        - prepare
       
     - set_fact:
         image_name: "{{image_list.obj.results | json_query(name_query) }}"
@@ -53,13 +59,17 @@
       vars:
         name_query: "[?controller_info.build.tag.contains(@, '{{ zip_image_version }}')].name"
         type_query: "[?controller_info.build.tag.contains(@, '{{ zip_image_version }}')].type"
-        uuid_query: "[?controller_info.build.tag.contains(@, '{{ zip_image_version }}')].uuid" 
+        uuid_query: "[?controller_info.build.tag.contains(@, '{{ zip_image_version }}')].uuid"
+      tags:
+        - prepare
 
   # Upload the image if it is not yet on the controller
     - name: Calling upload_image role
       include_role:
         name: upload_image
       when: image_name | length == 0
+      tags:
+        - prepare
 
     - name: Get our current version
       avi_api_session:
@@ -68,6 +78,8 @@
         timeout: 3000
         path: version/controller
       register: cluster_version
+      tags:
+        - prepare
 
     - name: get cluster info
       avi_api_session:
@@ -76,9 +88,13 @@
         timeout: 3000
         path: cluster
       register: cluster_info
+      tags:
+        - prepare
 
     - set_fact:
         cluster_uuid: "{{ cluster_info.obj.uuid }}"
+      tags:
+        - prepare
 
   # Configure GSLB maintenance mode. This only runs on the GSLB Leader
     - name: Enable GSLB maintenance mode
