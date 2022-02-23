@@ -1,8 +1,8 @@
 ---
 avi_credentials:
   controller: "{{ ansible_host }}"
-  username: admin
-  password: Avi123!@#
-  api_version: 20.1.4
-upgrade_file_location: avi_patch-20.1.4-2p3-9005.pkg
+  username: "{{ avi_username | default('admin') }}"
+  password: "{{ avi_password | default('Avi123!@#') }}" 
+  api_version: "{{ avi_version | default('20.1.4') }}"
+upgrade_file_url: "{{ upgrade_file_uri }}" 
 ansible_python_interpreter: "{{ ansible_playbook_python }}"
