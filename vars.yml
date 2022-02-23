@@ -4,5 +4,6 @@ avi_credentials:
   username: "{{ avi_username | default('admin') }}"
   password: "{{ avi_password | default('Avi123!@#') }}" 
   api_version: "{{ avi_version | default('20.1.4') }}"
-upgrade_file_url: "{{ upgrade_file_uri }}" 
+upgrade_file_url: "{{ upgrade_file_uri }}"
+upgrade_file_location: "{{ upgrade_file_path | default('/tmp/controller.pkg') }}"
 ansible_python_interpreter: "{{ ansible_playbook_python }}"
