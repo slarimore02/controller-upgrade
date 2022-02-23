@@ -25,12 +25,12 @@
     - name: Download Avi Update Package
       get_url:
         url: "{{ upgrade_file_url }}"
-        dest: /tmp/controller.pkg
+        dest: "{{ upgrade_file_location }}"
         mode: '0440'
         
     - name: Pull version file out of upgrade package
       unarchive:
-        src: /tmp/controller.pkg
+        src: "{{ upgrade_file_location }}"
         dest: ./
         extra_opts:
         - --strip=1
