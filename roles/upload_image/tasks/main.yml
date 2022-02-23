@@ -7,12 +7,13 @@
       avi_credentials: "{{ avi_credentials }}"
       file_path: "{{ upgrade_file_location }}"
       api_version: "{{ avi_credentials.api_version }}"
+      timeout: 3000
 # get new image list
   - name: get updated image list
     avi_api_session:
       avi_credentials: "{{ avi_credentials }}"       
       http_method: get
-      timeout: 3000
+      timeout: 60
       path: image
     register: image_list
   - set_fact:
