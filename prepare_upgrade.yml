@@ -22,9 +22,15 @@
         msg: "This cluster has GSLB disabled. Please use non-gslb upgrade."
       when: gslb.obj.count == 0
 
+    - name: Download Avi Update Package
+      get_url:
+        url: "{{ upgrade_file_url }}"
+        dest: /tmp/controller.pkg
+        mode: '0440'
+        
     - name: Pull version file out of upgrade package
       unarchive:
-        src: "{{ upgrade_file_location }}"
+        src: /tmp/controller.pkg
         dest: ./
         extra_opts:
         - --strip=1
