@@ -1,0 +1,34 @@
+---
+- hosts: "{{ hosts | default('all') }}"
+  gather_facts: no
+  roles:
+    - role: "avinetworks.avisdk"
+  connection: local
+  vars_files: ./vars.yml
+  vars:
+    #HOST_COUNT: "{{ ansible_play_hosts | length }}"
+    gslb_enabled: false
+  any_errors_fatal: true
+  serial: 1
+  tasks:
+    - name: Perform Avi Upgrade when GSLB is not enabled
+      ansible.builtin.include_tasks: upgrade_non_gslb.yml
+      when: not gslb_enabled
+
+    - name: Prepare Upgrade
+      ansible.builtin.include_tasks: tasks/prepare_upgrade.yml
+      when: gslb_enabled
+
+    - name: Upgrade GSLB Followers
+      ansible.builtin.include_tasks: tasks/upgrade_followers.yml
+      when: gslb_enabled
+      apply:
+        tags:
+          - followers
+
+    - name: Upgrade GSLB Leader
+      ansible.builtin.include_tasks: tasks/upgrade_leader.yml
+      when: gslb_enabled
+      apply:
+        tags:
+          - leader
