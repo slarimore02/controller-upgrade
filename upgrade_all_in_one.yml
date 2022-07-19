@@ -11,11 +11,14 @@
   any_errors_fatal: true
   serial: 1
   tasks:
+    - name: Create the list
+      set_fact: 
+        controllers_list: "{{ avi_controllers.split(',') }}"
     - name: Add Avi Controllers to all hosts group
       ansible.builtin.add_host:
         name: '{{ item }}'
         groups: all
-      loop: "{{ avi_controllers }}" 
+      loop: "{{ controllers_list }}" 
     - name: Perform Avi Upgrade when GSLB is not enabled
       ansible.builtin.include_tasks: upgrade_non_gslb.yml
       when: not gslb_enabled
