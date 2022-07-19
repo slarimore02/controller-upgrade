@@ -27,13 +27,13 @@
     - name: Upgrade GSLB Followers
       ansible.builtin.include_tasks: tasks/upgrade_followers.yml
       when: gslb_enabled
-      apply:
-        tags:
-          - followers
+      #apply:
+      #  tags:
+      #    - followers
 
     - name: Upgrade GSLB Leader
       ansible.builtin.include_tasks: tasks/upgrade_leader.yml
       when: gslb_enabled
-      apply:
-        tags:
-          - leader
+      #apply:
+      #  tags:
+      #    - leader
